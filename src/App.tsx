@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 import { Authenticator } from "@aws-amplify/ui-react";
-import '@aws-amplify/ui-react/styles.css';
+import "@aws-amplify/ui-react/styles.css";
+import { StorageManager } from "@aws-amplify/ui-react-storage";
+import "@aws-amplify/ui-react/styles.css";
+import outputs from '../amplify_outputs.json';
+import { Amplify } from 'aws-amplify';
+
+Amplify.configure(outputs);
 
 const client = generateClient<Schema>();
 
@@ -25,9 +31,9 @@ function App() {
 
   return (
     <Authenticator>
-      {({ signOut }) => (
+      {({ signOut, user }) => (
         <main>
-          <h1>My todos</h1>
+          <h1>{user?.signInDetails?.loginId}'s todos</h1>
           <button onClick={createTodo}>+ new</button>
           <ul>
             {todos.map((todo) => (
@@ -36,6 +42,14 @@ function App() {
               </li>
             ))}
           </ul>
+          <div>
+            <StorageManager
+              acceptedFileTypes={["application/pdf"]}
+              path="documents/"
+              maxFileCount={1}
+              isResumable
+            />
+          </div>
           <div>
             🥳 App successfully hosted. Try creating a new todo.
             <br />
